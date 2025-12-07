@@ -45,7 +45,7 @@ O projeto segue a **Medallion Architecture** (Bronze, Silver, Gold):
 | **MinIO** | `http://localhost:9001` | `admin` / `password123` |
 | **Dashboard** | `http://localhost:8501` | *(Acesso Livre)* |
 
-4.  No Airflow, ative a DAG `pipeline_completo_elt_gold`. Ela rodará a cada 10 minutos.
+4.  No Airflow, ative a DAG `elt`. Ela rodará a cada 10 minutos.
 
 ## 📊 Estrutura de Pastas
 
