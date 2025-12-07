@@ -57,29 +57,4 @@ O projeto segue a **Medallion Architecture** (Bronze, Silver, Gold):
 ├── Dockerfile.streamlit   # Imagem Customizada do Dashboard
 └── requirements.txt       # Dependências Python
 ```
-### Passo 3: Enviar para o GitHub 🚀
 
-Agora vamos subir tudo. No seu terminal:
-
-1.  **Verifique o status:**
-    ```bash
-    git status
-    ```
-    *(Você deve ver vários arquivos vermelhos como `dashboard.py`, `Dockerfile.streamlit`, etc)*.
-
-2.  **Adicione tudo:**
-    ```bash
-    git add .
-    ```
-
-3.  **Faça o Commit (Salvar o pacote):**
-    ```bash
-    git commit -m "Feat: Implementação completa da arquitetura Lakehouse com Streamlit e DuckDB"
-    ```
-
-4.  **Envie para a nuvem:**
-    ```bash
-    git push
-    ```
-
----
