@@ -1,0 +1,27 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Airflow ---
+logs/
+*.log
+airflow.cfg
+unittests.cfg
+webserver_config.py
+
+# --- Ambientes Virtuais ---
+.env
+.venv
+env/
+venv/
+
+# --- IDEs ---
+.vscode/
+.idea/
+
+# --- Sistema Operacional ---
+.DS_Store
+
+minio_data/
+postgres_data/

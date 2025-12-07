@@ -1,0 +1,12 @@
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# Instala as bibliotecas necessárias
+RUN pip install streamlit duckdb s3fs plotly pandas
+
+# Copia o código do dashboard (que vamos criar)
+COPY dashboard.py .
+
+# Comando para rodar o app
+CMD ["streamlit", "run", "dashboard.py", "--server.address=0.0.0.0"]
