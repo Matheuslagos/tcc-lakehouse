@@ -1,8 +1,8 @@
-# 🪙 Crypto Lakehouse: Arquitetura de Dados Moderna (End-to-End)
+#  Lakehouse: Arquitetura de Dados Moderna (End-to-End)
 
 Este projeto implementa um pipeline completo de Engenharia de Dados (**ELT**), utilizando uma arquitetura **Data Lakehouse** baseada em Containers. O objetivo é ingerir dados de criptomoedas em tempo real, processá-los e disponibilizar visualizações analíticas.
 
-## 🏗️ Arquitetura do Projeto
+##  Arquitetura do Projeto
 
 O projeto segue a **Medallion Architecture** (Bronze, Silver, Gold):
 
@@ -11,7 +11,7 @@ O projeto segue a **Medallion Architecture** (Bronze, Silver, Gold):
 3.  **Consolidação (Gold):** O **DuckDB** unifica os arquivos históricos em uma tabela única otimizada para leitura.
 4.  **Visualização:** O **Streamlit** consome a camada Gold para gerar dashboards interativos em tempo real.
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 * **Orquestração:** Apache Airflow 2.10
 * **Storage (Data Lake):** MinIO (S3 Compatible)
@@ -19,7 +19,7 @@ O projeto segue a **Medallion Architecture** (Bronze, Silver, Gold):
 * **Visualização:** Streamlit + Plotly
 * **Infraestrutura:** Docker & Docker Compose
 
-## 🚀 Como Rodar
+##  Como Rodar
 
 ### Pré-requisitos
 * Docker e Docker Compose instalados.
@@ -47,7 +47,7 @@ O projeto segue a **Medallion Architecture** (Bronze, Silver, Gold):
 
 4.  No Airflow, ative a DAG `elt`. Ela rodará a cada 10 minutos.
 
-## 📊 Estrutura de Pastas
+## Estrutura de Pastas
 
 ```text
 ├── dags/                  # Pipelines do Airflow (Python)
