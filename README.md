@@ -1,10 +1,10 @@
-# 🇧🇷 Lakehouse: Monitor Econômico do Brasil (End-to-End)
+# 🇧 Lakehouse: Monitor Econômico do Brasil (End-to-End)
 
 Este projeto implementa um pipeline completo de Engenharia de Dados (**ELT**), utilizando uma arquitetura **Data Lakehouse** baseada em Containers. 
 
 O objetivo é ingerir dados oficiais do **Banco Central do Brasil (BCB)**, processar séries históricas de Câmbio e Indicadores Macroeconômicos (IPCA, Selic) e disponibilizar um dashboard analítico para tomada de decisão.
 
-## 🏛️ Arquitetura do Projeto
+##  Arquitetura do Projeto
 
 O projeto segue a **Medallion Architecture** (Bronze, Silver, Gold):
 
@@ -13,7 +13,7 @@ O projeto segue a **Medallion Architecture** (Bronze, Silver, Gold):
 3.  **Consolidação (Gold):** O **DuckDB** unifica os arquivos históricos em uma tabela analítica otimizada (`economia_unificada.parquet`).
 4.  **Visualização:** O **Streamlit** consome a camada Gold para gerar gráficos de tendência (Inflação vs Juros) e KPIs de Câmbio.
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 * **Orquestração:** Apache Airflow 2.10
 * **Fonte de Dados:** API Banco Central do Brasil (SGS)
@@ -22,7 +22,7 @@ O projeto segue a **Medallion Architecture** (Bronze, Silver, Gold):
 * **Visualização:** Streamlit + Plotly
 * **Infraestrutura:** Docker & Docker Compose
 
-## 🚀 Como Rodar
+##  Como Rodar
 
 ### Pré-requisitos
 * Docker e Docker Compose instalados.
@@ -51,7 +51,7 @@ O projeto segue a **Medallion Architecture** (Bronze, Silver, Gold):
 4.  No Airflow, ative a DAG **`elt_economia_bcb`**.
     * *Nota:* Ela está configurada para rodar diariamente (dias úteis), mas você pode executar manualmente (Trigger) para carga inicial.
 
-## 📂 Estrutura de Pastas
+##  Estrutura de Pastas
 
 ```text
 ├── dags/                  
