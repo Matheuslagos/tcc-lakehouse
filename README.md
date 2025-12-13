@@ -1,4 +1,4 @@
-# 🇧 Lakehouse: Monitor Econômico do Brasil (End-to-End)
+# Lakehouse: Monitor Econômico do Brasil (End-to-End)
 
 Este projeto implementa um pipeline completo de Engenharia de Dados (**ELT**), utilizando uma arquitetura **Data Lakehouse** baseada em Containers. 
 
