@@ -26,20 +26,20 @@ COD_EURO = 21619
 COD_IPCA = 433
 COD_SELIC = 432
 
-# --- HELPER 1: Gerador de URL por Data (Pula o limite de 20 itens) ---
-def gerar_url(codigo_serie, anos_historico):
+# --- HELPER 1: Gerador de URL (Incremental Estrito) ---
+def gerar_url(codigo_serie, dias_delta=1):
     """
-    Calcula data inicial e final para pegar grandes volumes de dados.
-    CORREÇÃO: Adicionado 'bcdata.sgs.' na URL.
+    Busca dados de ontem para hoje.
+    Como roda as 09:00, pega o fechamento de ontem.
     """
     data_fim = datetime.now()
-    data_inicio = data_fim - timedelta(days=anos_historico * 365)
+    data_inicio = data_fim - timedelta(days=dias_delta)
     
     fmt = "%d/%m/%Y"
     str_inicio = data_inicio.strftime(fmt)
     str_fim = data_fim.strftime(fmt)
     
-    # URL Corrigida com o prefixo 'bcdata.sgs.'
+    # Exemplo: Se rodar dia 15/05, pede de 14/05 a 15/05.
     return f"https://api.bcb.gov.br/dados/serie/bcdata.sgs.{codigo_serie}/dados?formato=json&dataInicial={str_inicio}&dataFinal={str_fim}"
 
 # --- HELPER 2: Salvar no MinIO ---
@@ -65,31 +65,34 @@ def pegar_dados_validos(url, nome_indicador):
         
     return dados
 
-# --- 1.A TAREFA: Ingestão de Câmbio ---
-def ingestao_cambio():
-    # Pegando 1 ano de histórico
-    url_dolar = gerar_url(COD_DOLAR, anos_historico=1)
-    url_euro = gerar_url(COD_EURO, anos_historico=1)
+# --- 1.A TAREFA: Ingestão de Câmbio (Apenas último dia) ---
+def ingestao_cambio(**kwargs):
+    # dias_delta=1 garante que pegamos apenas o dado mais recente disponível
+    url_dolar = gerar_url(COD_DOLAR, dias_delta=1)
+    url_euro = gerar_url(COD_EURO, dias_delta=1)
     
     dolar = pegar_dados_validos(url_dolar, "Dolar")
     euro = pegar_dados_validos(url_euro, "Euro")
     
     payload = { "dolar": dolar, "euro": euro }
-    salvar_no_minio(payload, ARQUIVO_CAMBIO)
-    print(f">>> Sucesso! Baixados {len(dolar)} registros de Dólar.")
+    
+    # O nome do arquivo continua dinâmico para não sobrescrever histórico na Bronze
+    nome_arquivo = salvar_no_minio(payload, "cambio_raw")
+    kwargs['ti'].xcom_push(key='nome_arquivo_cambio', value=nome_arquivo)
 
 # --- 1.B TAREFA: Ingestão de Indicadores ---
-def ingestao_indicadores():
-    # Pegando 4 anos de histórico para ver a curva
-    url_ipca = gerar_url(COD_IPCA, anos_historico=4)
-    url_selic = gerar_url(COD_SELIC, anos_historico=4)
+def ingestao_indicadores(**kwargs):
+    
+    url_ipca = gerar_url(COD_IPCA, dias_delta=1) 
+    url_selic = gerar_url(COD_SELIC, dias_delta=1)
     
     ipca = pegar_dados_validos(url_ipca, "IPCA")
     selic = pegar_dados_validos(url_selic, "Selic")
     
     payload = { "ipca": ipca, "selic": selic }
-    salvar_no_minio(payload, ARQUIVO_INDICADORES)
-    print(f">>> Sucesso! Baixados {len(selic)} registros de Selic.")
+    
+    nome_arquivo = salvar_no_minio(payload, "indicadores_raw")
+    kwargs['ti'].xcom_push(key='nome_arquivo_indicadores', value=nome_arquivo)
 
 # --- 2. TAREFA: Transformação Silver ---
 def transformacao_silver():
@@ -108,7 +111,6 @@ def transformacao_silver():
     path_cambio = f"s3://{BUCKET_BRONZE}/{ARQUIVO_CAMBIO}"
     path_indicadores = f"s3://{BUCKET_BRONZE}/{ARQUIVO_INDICADORES}"
     
-    # CAST EXPLÍCITO (Mantido pois funciona perfeitamente com listas grandes)
     df = con.execute(f"""
         SELECT 'dolar' as ativo, 'moeda' as categoria, 
                strptime(obj.data, '%d/%m/%Y') as data_ref, 
