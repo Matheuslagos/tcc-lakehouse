@@ -80,15 +80,31 @@ def ingestao_cambio(**kwargs):
     nome_arquivo = salvar_no_minio(payload, "cambio_raw")
     kwargs['ti'].xcom_push(key='nome_arquivo_cambio', value=nome_arquivo)
 
-# --- 1.B TAREFA: Ingestão de Indicadores ---
+# --- 1.B TAREFA: Ingestão de Indicadores (Lógica Mista) ---
 def ingestao_indicadores(**kwargs):
+    hoje = datetime.now()
     
-    url_ipca = gerar_url(COD_IPCA, dias_delta=1) 
-    url_selic = gerar_url(COD_SELIC, dias_delta=1)
-    
-    ipca = pegar_dados_validos(url_ipca, "IPCA")
+    # --- 1. SELIC (Diário) ---
+    # Tenta pegar a Selic do dia (com delta curto)
+    # Importante usar a função 'pegar_dados_validos' robusta (que retorna [] se der 404)
+    url_selic = gerar_url(COD_SELIC, dias_delta=5) 
     selic = pegar_dados_validos(url_selic, "Selic")
     
+    # --- 2. IPCA (Mensal - Gatilho no dia 15) ---
+    ipca = []
+    # O IPCA geralmente sai entre o dia 9 e 12. 
+    # Colocamos dia 15 para ter certeza absoluta que já está disponível.
+    if hoje.day == 15:
+        print(">>> Hoje é dia 15! Executando rotina mensal do IPCA...")
+        
+        # Aumentamos a janela para 40 dias para garantir que pegamos o último dado lançado
+        # independente de ter saído dia 10, 11 ou 12.
+        url_ipca = gerar_url(COD_IPCA, dias_delta=40)
+        ipca = pegar_dados_validos(url_ipca, "IPCA")
+    else:
+        print(f">>> Hoje é dia {hoje.day}. O IPCA só será buscado no dia 15.")
+
+    # Monta o payload (IPCA será [] na maioria dos dias, e preenchido no dia 15)
     payload = { "ipca": ipca, "selic": selic }
     
     nome_arquivo = salvar_no_minio(payload, "indicadores_raw")
