@@ -1,6 +1,5 @@
 services:
   # --- MINIO (DATA LAKE) ---
-  # Usa imagem oficial, sem modificações
   minio:
     image: minio/minio
     container_name: minio-datalake
@@ -16,7 +15,6 @@ services:
       - minio_data:/data
 
   # --- POSTGRES (METADADOS DO AIRFLOW) ---
-  # Usa imagem oficial
   postgres:
     image: postgres:13
     container_name: airflow_postgres
